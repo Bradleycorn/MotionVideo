@@ -1,0 +1,79 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-allopen'
+
+apply plugin: 'androidx.navigation.safeargs'
+
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "net.bradball.motionvideo"
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
+    implementation 'androidx.core:core-ktx:1.1.0-alpha03'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    implementation 'androidx.activity:activity-ktx:1.0.0-alpha03'
+
+    // MATERIAL COMPONENTS
+    implementation 'com.google.android.material:material:1.1.0-alpha02'
+
+    // CONSTRAINT LAYOUT
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+
+    // ANDROIDX WIDGETS
+    implementation "androidx.recyclerview:recyclerview:1.0.0"
+    implementation 'androidx.viewpager:viewpager:1.0.0'
+
+    // JETPACK LIFECYCLE
+    implementation "androidx.lifecycle:lifecycle-extensions:$jetpack_lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel:$jetpack_lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-extensions:$jetpack_lifecycle_version"
+
+    // JETPACK NAVIGATION
+    implementation "android.arch.navigation:navigation-fragment:$navigation_version"
+    implementation "android.arch.navigation:navigation-ui:$navigation_version"
+    implementation "android.arch.navigation:navigation-fragment-ktx:$navigation_version"
+    implementation "android.arch.navigation:navigation-ui-ktx:$navigation_version"
+
+    // DAGGER
+    implementation "com.google.dagger:dagger:$dagger_version"
+    implementation "com.google.dagger:dagger-android:$dagger_version"
+    implementation "com.google.dagger:dagger-android-support:$dagger_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger_version"
+
+    // TESTING
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    androidTestImplementation("androidx.arch.core:core-testing:$androidx_testing_version", {
+        exclude group: 'com.android.support', module: 'support-compat'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-core-utils'
+    })
+    testImplementation("androidx.arch.core:core-testing:$androidx_testing_version", {
+        exclude group: 'com.android.support', module: 'support-compat'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-core-utils'
+    })
+}

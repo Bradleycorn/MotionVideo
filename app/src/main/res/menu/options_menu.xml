@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/option_play_video"
+        android:icon="@drawable/ic_play_arrow"
+        android:title="@string/option_play_video"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/option_stop_video"
+        android:icon="@drawable/ic_stop"
+        android:title="@string/option_stop_video"
+        app:showAsAction="ifRoom" />
+
+</menu>

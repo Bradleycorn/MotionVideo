@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Motion Layout Demo</string>
+    <string name="option_play_video">Play Video</string>
+    <string name="option_stop_video">Stop Video</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="tab_first">List 1</string>
+    <string name="tab_middle">List 2</string>
+    <string name="tab_last">List 3</string>
+
+    <string name="video_controls_pip">toggle picture-in-picture</string>
+    <string name="video_controls_close">Close Video</string>
+    <string name="video_controls_fullscreen">fullscreen</string>
+    <string name="video_controls_fullscreen_exit">Exit Fullscreen</string>
+
+</resources>

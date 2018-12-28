@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+
+    <!--
+        This file defines the constraint sets for the program (i.e. the video, and the viewpager),
+        so that we can transition the video between different states (embedded, pip, fullscreen).
+
+        If you need to change/add constraints or properties for a view, keep in mind that
+        each view is duplicated several times below, so you will likely need to update
+        it in several places.
+    -->
+
+    <ConstraintSet android:id="@+id/video_state_embedded_playing">
+        <Constraint
+            android:id="@+id/video_player"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:elevation="0dp"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/list_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/video_player"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/list_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            motion:layout_constraintTop_toBottomOf="@id/list_tabs"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="visible" />
+    </ConstraintSet>
+
+    <ConstraintSet  android:id="@+id/video_state_embedded_stopped">
+        <Constraint
+            android:id="@+id/video_player"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone" />
+        <Constraint
+            android:id="@+id/list_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/list_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            motion:layout_constraintTop_toBottomOf="@id/list_tabs"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="visible" />
+
+    </ConstraintSet>
+
+
+    <ConstraintSet android:id="@+id/video_state_pip_playing">
+        <Constraint
+            android:id="@+id/video_player"
+            android:layout_width="0dp"
+            motion:layout_constraintWidth_default="percent"
+            motion:layout_constraintWidth_percent="0.5"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:elevation="4dp"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="visible"/>
+        <Constraint
+            android:id="@+id/list_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/list_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            motion:layout_constraintTop_toBottomOf="@id/list_tabs"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="visible" />
+
+    </ConstraintSet>
+
+
+    <ConstraintSet android:id="@+id/video_state_pip_stopped">
+        <Constraint
+            android:id="@+id/video_player"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+        <Constraint
+            android:id="@+id/list_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/list_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            motion:layout_constraintTop_toBottomOf="@id/list_tabs"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="visible" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/video_state_fullscreen">
+        <Constraint
+            android:id="@+id/video_player"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:elevation="0dp"
+            android:layout_margin="0dp"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="visible" />
+        <Constraint
+            android:id="@+id/list_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <Constraint
+            android:id="@+id/list_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            motion:layout_constraintTop_toBottomOf="@id/list_tabs"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone" />
+    </ConstraintSet>
+</MotionScene>

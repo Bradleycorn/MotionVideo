@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaryColor">#3f51b5</color>
+    <color name="primaryLightColor">#757de8</color>
+    <color name="primaryDarkColor">#002984</color>
+    <color name="onPrimaryColor">#ffffff</color>
+
+
+    <color name="secondaryColor">#c62828</color>
+    <color name="secondaryLightColor">#ff5f52</color>
+    <color name="secondaryDarkColor">#8e0000</color>
+    <color name="onSecondaryColor">#ffffff</color>
+
+    <color name="errorColor">#ff9800</color>
+    <color name="onErrorColor">#000000</color>
+
+
+    <!--
+    These colors come from the material_components theme.
+    Per the documentation here:
+    https://github.com/material-components/material-components-android/blob/master/lib/java/com/google/android/material/color/res/values/colors.xml
+
+    We need to set these colors to work around poor attribute support in Color State Lists.
+
+    To set these values, keep the first 2 alphanumeric values (which sets the alpha), and
+    use the primaryColor above for the rest of the color value.
+ -->
+    <color name="mtrl_on_surface_disabled">#613f51b5</color>
+    <color name="mtrl_on_surface_emphasis_high_type">#DE3f51b5</color>
+    <color name="mtrl_on_surface_emphasis_medium">#993f51b5</color>
+
+
+</resources>

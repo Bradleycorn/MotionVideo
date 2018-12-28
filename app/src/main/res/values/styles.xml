@@ -1,0 +1,42 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="MotionVideoTheme" parent="Theme.MaterialComponents">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorPrimaryVariant">@color/primaryDarkColor</item>
+        <item name="colorOnPrimary">@color/onPrimaryColor</item>
+
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryColor</item>
+        <item name="colorAccent">@color/secondaryColor</item>
+        <item name="colorOnSecondary">@color/onSecondaryColor</item>
+
+        <item name="colorError">@color/errorColor</item>
+        <item name="colorOnError">@color/onErrorColor</item>
+
+
+        <item name="android:textViewStyle">@style/MotionVideoTextView</item>
+    </style>
+
+    <style name="MotionVideoTextView" parent="android:Widget.Material.TextView">
+        <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:textAppearance">?attr/textAppearanceBody1</item>
+    </style>
+
+
+    <!-- DEFAULT ATTRIBUTE VALUES FOR CUSTOM VIEWS -->
+    <style name="Component.DragMotionLayout" parent="android:Widget">
+        <item name="draggableView">@null</item>
+        <item name="draggingEnabled">true</item>
+    </style>
+
+
+    <style name="Component.ControlledVideoView" parent="android:Widget">
+        <item name="android:src">@null</item>
+        <item name="android:adjustViewBounds">false</item>
+        <item name="autoPlay">true</item>
+        <item name="isFullScreen">false</item>
+    </style>
+
+</resources>

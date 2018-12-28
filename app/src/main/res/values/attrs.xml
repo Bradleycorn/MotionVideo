@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DragMotionLayout">
+        <attr name="draggableView" format="reference"/>
+        <attr name="draggingEnabled" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="ControlledVideoView">
+        <attr name="android:src"/>
+        <attr name="android:title"/>
+        <attr name="android:adjustViewBounds"/>
+        <attr name="autoPlay" format="boolean"/>
+        <attr name="isFullScreen" format="boolean" />
+    </declare-styleable>
+</resources>

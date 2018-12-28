@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_margin">16dp</dimen>
+
+    <!-- Video controls -->
+    <dimen name="video_control_center_margin">32dp</dimen>
+    <dimen name="video_pip_control_margin">8dp</dimen>
+
+
+</resources>
