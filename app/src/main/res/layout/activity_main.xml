@@ -8,10 +8,6 @@
     android:focusableInTouchMode="true"
     app:layoutDescription="@xml/main_activity_motion_scene"
     app:currentState="@id/video_state_embedded_playing">
-<!--
-    app:draggableView="@id/program_video"
-    app:draggingEnabled="false"
--->
     <!--
         The ControlledVideoView and ViewPager widgets are defined here,
         but most of their layout properties are set in the xml/main_activity_motion_scene_scene.xml.
