@@ -28,10 +28,10 @@ mode, whichever was the last mode used.
 the last mode used (inline or pip) and restart the video in that mode.
 
 <p>
-  <img align="left" src="documentation/assets/stopped.png" width="200" />
-  <img align="left" src="documentation/assets/embedded.png" width="200" />
-  <img align="left" src="documentation/assets/pip.png" width="200"/>
-  <img align="left" src="documentation/assets/full-screen.png" width="200"/>
+  <img  src="documentation/assets/stopped.png" width="200" />
+  <img  src="documentation/assets/embedded.png" width="200" />
+  <img  src="documentation/assets/pip.png" width="200"/>
+  <img  src="documentation/assets/full-screen.png" width="200"/>
 </p>
 
 ### Dragging and Scrolling
