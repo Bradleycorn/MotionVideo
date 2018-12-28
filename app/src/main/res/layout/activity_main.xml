@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout
+<net.bradball.motionvideo.customViews.DragMotionLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_container"
@@ -7,7 +7,10 @@
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
     app:layoutDescription="@xml/main_activity_motion_scene"
-    app:currentState="@id/video_state_embedded_playing">
+    app:currentState="@id/video_state_embedded_playing"
+    app:draggableView="@id/video_player"
+    app:draggingEnabled="false">
+
     <!--
         The ControlledVideoView and ViewPager widgets are defined here,
         but most of their layout properties are set in the xml/main_activity_motion_scene_scene.xml.
@@ -37,4 +40,4 @@
         android:outlineProvider="paddedBounds"
         app:autoPlay="false" />
 
-</androidx.constraintlayout.motion.widget.MotionLayout>
+</net.bradball.motionvideo.customViews.DragMotionLayout>

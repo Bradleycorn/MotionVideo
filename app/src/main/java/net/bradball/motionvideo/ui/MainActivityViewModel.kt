@@ -40,6 +40,15 @@ class MainActivityViewModel: ViewModel() {
     }
 
     /**
+     * An enum to indicate scroll direction
+     */
+    enum class SCROLL_DIRECTION {
+        UP,
+        DOWN
+    }
+
+
+    /**
      * When returning from FullScreen, we need to know if we should go to
      * Picture-in-Picture (PIP) mode, or embedded mode. This flag will
      * keep track of that.
@@ -70,6 +79,13 @@ class MainActivityViewModel: ViewModel() {
 
         return@map newState
     }
+
+    /**
+     * A LiveData that emits to observers whenever the list is scrolled
+     */
+    private val _listScrolled: MutableLiveData<Pair<SCROLL_DIRECTION, Int>> = MutableLiveData()
+    val listScrolled: LiveData<Pair<SCROLL_DIRECTION, Int>> = _listScrolled
+
 
     /**
      * A handler that we'll use to effectively debounce orientation changes
@@ -181,6 +197,14 @@ class MainActivityViewModel: ViewModel() {
             }
         }
     }
+
+    fun onListScrolled(newPosition: Int, direction: SCROLL_DIRECTION?) {
+        when {
+            direction == SCROLL_DIRECTION.DOWN -> _layoutState.value = VideoLayoutState.PIP
+            newPosition <= 0 && _playbackState.value != VideoPlaybackState.PLAYING -> _layoutState.value = VideoLayoutState.EMBEDDED
+        }
+    }
+
 
 }
 

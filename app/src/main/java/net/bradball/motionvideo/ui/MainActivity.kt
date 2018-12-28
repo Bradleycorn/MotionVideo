@@ -135,6 +135,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewPager.adapter = adapter
+
+        viewPager.addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
+            override fun onPageSelected(position: Int) {
+                val listFragment = adapter.getItem(position) as ListFragment
+                listFragment.handleScroll(listFragment.listScrollPosition)
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                /* noop */
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+                /* noop */
+            }
+        })
     }
 
 
@@ -264,8 +279,9 @@ class MainActivity : AppCompatActivity() {
         if (activity_container.currentState != newState) {
             activity_container.transitionToState(newState)
         }
-    }
+        activity_container.draggingEnabled = (currentLayoutState == MainActivityViewModel.VideoLayoutState.PIP)
 
+    }
 
     private fun playVideo() {
         video_player.play()

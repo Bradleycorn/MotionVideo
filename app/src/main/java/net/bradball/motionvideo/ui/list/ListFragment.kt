@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProviders
 import net.bradball.motionvideo.R
+import net.bradball.motionvideo.ui.MainActivityViewModel
 
 /**
  * A fragment representing a list of Items.
@@ -26,6 +28,10 @@ class ListFragment: Fragment() {
             }
         }
     }
+
+    private val activityViewModel: MainActivityViewModel by viewModels({activity!!})
+
+    var listScrollPosition = 0
 
     private val listTitle: String by lazy {
         arguments?.getString(ARG_TITLE) ?: ""
@@ -48,9 +54,30 @@ class ListFragment: Fragment() {
             with(view) {
                 layoutManager = LinearLayoutManager(context)
                 adapter = ListItemAdapter(viewModel.getItems(listTitle))
+
+                addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        listScrollPosition += dy
+                        handleScroll(dy)
+                    }
+                })
             }
         }
         return view
     }
+
+    fun handleScroll(dy: Int) {
+        if (listScrollPosition < 0) listScrollPosition = 0
+
+        val direction = when {
+            dy > 0 -> MainActivityViewModel.SCROLL_DIRECTION.DOWN
+            dy < 0 -> MainActivityViewModel.SCROLL_DIRECTION.UP
+            else -> null
+        }
+
+        activityViewModel.onListScrolled(listScrollPosition, direction)
+    }
+
 
 }
