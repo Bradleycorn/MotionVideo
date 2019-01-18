@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun onVideoFullScreenClicked(isFullScreen: Boolean) {
             //isFullScreen = true means we're already in fullscreen,
-            // so we want to turn it off. Thus, lock to portrait. And Vice Versa
+            // so we want to turn it off and lock to portrait. And Vice Versa
             val orientationLock = when (isFullScreen) {
                 true -> Configuration.ORIENTATION_PORTRAIT
                 false -> Configuration.ORIENTATION_LANDSCAPE
@@ -171,8 +171,16 @@ class MainActivity : AppCompatActivity() {
                 currentPlaybackState = playbackState
 
                 when (currentPlaybackState) {
-                    MainActivityViewModel.VideoPlaybackState.PLAYING -> startVideoPlayer()
-                    else -> stopVideoPlayer()
+                    MainActivityViewModel.VideoPlaybackState.PLAYING -> {
+                        if (orientationListener.canDetectOrientation()) {
+                            orientationListener.enable()
+                        }
+                        playVideo()
+                    }
+                    else -> {
+                        orientationListener.disable()
+                        stopVideo()
+                    }
                 }
             }
 
@@ -188,34 +196,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    /**
-     * Called when we want to start playing video.
-     * This method will make the player visible,
-     * enable the orientaiton listener, and start playback.
-     *
-     * NOTE: You probably don't want to call this method directly. Instead, call methods
-     * on the viewModel that will trigger an update to the current playback state.
-     */
-    private fun startVideoPlayer() {
-        if (orientationListener.canDetectOrientation()) {
-            orientationListener.enable()
-        }
-        playVideo()
-    }
-
-    /**
-     * Called when we want to stop playing video.
-     * This method will hide the player,
-     * disable the orientation listener,
-     * and stop playback.
-     *
-     * NOTE: You probably don't want to call this method directly. Instead, call methods
-     * on the viewModel that will trigger an update to the current playback state.
-     */
-    private fun stopVideoPlayer() {
-        orientationListener.disable()
-        stopVideo()
-    }
 
 
     /**

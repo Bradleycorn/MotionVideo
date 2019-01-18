@@ -28,9 +28,12 @@ import net.bradball.motionvideo.R
 /**
  * Provides video playback. There is nothing directly related to Picture-in-Picture here.
  *
+ * Borrowed from the Google Picture-in-Picture mode sample:
+ * https://github.com/googlesamples/android-PictureInPicture
  *
- * This is similar to [android.widget.VideoView], but it comes with a custom control
- * (play/pause, fast forward, and fast rewind).
+ * This is similar to [android.widget.VideoView], but it comes with
+ * custom controls (play/pause, fast forward, and fast rewind) that
+ * overlay the video.
  */
 class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : RelativeLayout(context, attrs, defStyleAttr) {
 
