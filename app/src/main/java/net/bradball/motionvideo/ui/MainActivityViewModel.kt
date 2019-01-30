@@ -154,7 +154,7 @@ class MainActivityViewModel: ViewModel() {
     }
 
     fun onOrientationForced(orientation: Int) {
-        orientationLock = orientation
+//        orientationLock = orientation
         setOrientation(orientation)
     }
 

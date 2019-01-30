@@ -27,8 +27,12 @@ mode, whichever was the last mode used.
 - If the video is stopped in full screen mode, and then restarted, the app should "remember"
 the last mode used (inline or pip) and restart the video in that mode.
 
-![Video](documentation/assets/embedded.png)
-
+<p>
+  <img  src="documentation/assets/stopped.png" width="200" />
+  <img  src="documentation/assets/embedded.png" width="200" />
+  <img  src="documentation/assets/pip.png" width="200"/>
+  <img  src="documentation/assets/full-screen.png" width="200"/>
+</p>
 
 ### Dragging and Scrolling
 As a bonus, you'll find a `drag-and-scroll` branch in the repo. This adds 2 additional features:

@@ -17,6 +17,14 @@
         If you need to add/edit constraints for these widgets, best do it there.
         See that file for more information.
     -->
+    <net.bradball.motionvideo.customViews.ControlledVideoView
+        android:id="@+id/video_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:outlineProvider="paddedBounds"
+        app:autoPlay="false" />
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/list_tabs"
         android:layout_width="match_parent"
@@ -27,17 +35,5 @@
         android:layout_width="match_parent"
         android:layout_height="0dp" />
 
-    <!--
-        The Video View is defined in the xml AFTER the ViewPager, so that the system
-        will render it "on top" of the view pager, allowing us to see
-        the video over the viewpager when it's in PIP mode.
-    -->
-    <net.bradball.motionvideo.customViews.ControlledVideoView
-        android:id="@+id/video_player"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:outlineProvider="paddedBounds"
-        app:autoPlay="false" />
 
 </net.bradball.motionvideo.customViews.DragMotionLayout>

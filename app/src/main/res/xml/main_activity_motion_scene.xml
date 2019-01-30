@@ -4,7 +4,7 @@
 
 
     <!--
-        This file defines the constraint sets for the program (i.e. the video, and the viewpager),
+        This file defines the constraint sets for the main activity (i.e. the video, and the viewpager),
         so that we can transition the video between different states (embedded, pip, fullscreen).
 
         If you need to change/add constraints or properties for a view, keep in mind that
