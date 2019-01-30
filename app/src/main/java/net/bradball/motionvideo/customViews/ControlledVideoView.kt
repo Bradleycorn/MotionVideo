@@ -15,6 +15,7 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
 import android.view.View.OnClickListener
+import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
@@ -38,7 +39,9 @@ import net.bradball.motionvideo.R
 class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : RelativeLayout(context, attrs, defStyleAttr) {
 
     /** Shows the video playback.  */
-    private val mSurfaceView: SurfaceView
+    private var mSurfaceView: SurfaceView? = null
+
+    private val container: RelativeLayout
 
     // Controls
     private val mToggle: ImageButton
@@ -148,25 +151,64 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
     }
 
 
+    private fun createSurface() {
+
+        val firstChild = container.getChildAt(0)
+
+        if (mSurfaceView != null && firstChild == mSurfaceView) {
+            container.removeView(firstChild)
+            mSurfaceView = null
+        }
+
+        mSurfaceView = SurfaceView(context)
+        mSurfaceView!!.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        mSurfaceView!!.id = R.id.video_surface
+
+        mSurfaceView!!.holder.apply {
+            addCallback(
+                    object : SurfaceHolder.Callback {
+                        override fun surfaceCreated(holder: SurfaceHolder) {
+                            mSurfaceView!!.setOnClickListener(videoControlsListener)
+                            if (mMediaPlayer != null) {
+                                mMediaPlayer?.setSurface(holder.surface)
+                            } else {
+                                adjustToggleState()
+                                showControls()
+                            }
+                        }
+
+                        override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {/* noop */}
+
+                        override fun surfaceDestroyed(holder: SurfaceHolder) {
+                            if (mMediaPlayer != null) {
+                                mSavedCurrentPosition = mMediaPlayer!!.currentPosition
+                            }
+                            destroyMediaPlayer()
+                        }
+                    })
+        }
+
+        container.addView(mSurfaceView, 0)
+    }
+
     init {
         setBackgroundColor(Color.BLACK)
 
-        // Inflate the content
-        val view = View.inflate(context, R.layout.component_video, this)
+        container = View.inflate(context, R.layout.component_video, this) as RelativeLayout
 
-        mSurfaceView = view.surface
-        mShade = view.shade
-        mToggle = view.toggle
-        mPipToggle = view.video_toggle_pip
-        mCloseButton = view.video_close
-        mFullScreenButton = view.video_fullscreen
+        mShade = container.shade
+        mToggle = container.toggle
+        mPipToggle = container.video_toggle_pip
+        mCloseButton = container.video_close
+        mFullScreenButton = container.video_fullscreen
+
 
         // May be Used for Replays. Views will need to be
         // added in layout.
         // --
         //mFastForward = view.fast_forward
         //mFastRewind = view.fast_rewind
-        mProgressBar = view.buffering_icon
+        mProgressBar = container.buffering_icon
 
         val attributes = context.obtainStyledAttributes(
                 attrs,
@@ -185,7 +227,7 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
         // Bind view events
         videoControlsListener = OnClickListener { clickedView ->
             when (clickedView.id) {
-                R.id.surface -> toggleControls()
+                R.id.video_surface -> toggleControls()
                 R.id.toggle -> toggle()
                 R.id.video_toggle_pip -> handlePipToggle()
                 R.id.video_close -> handleCloseButton()
@@ -201,38 +243,10 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
                         TimeoutHandler.MESSAGE_HIDE_CONTROLS, TIMEOUT_CONTROLS.toLong())
             }
         }
-        mSurfaceView.setOnClickListener(videoControlsListener)
         mToggle.setOnClickListener(videoControlsListener)
         mPipToggle.setOnClickListener(videoControlsListener)
         mCloseButton.setOnClickListener(videoControlsListener)
         mFullScreenButton.setOnClickListener(videoControlsListener)
-
-        // Prepare the surface
-        mSurfaceView.holder.apply {
-            addCallback(
-                    object : SurfaceHolder.Callback {
-                        override fun surfaceCreated(holder: SurfaceHolder) {
-                            if (mMediaPlayer != null) {
-                                mMediaPlayer?.setSurface(holder.surface)
-                                mSurfaceView.setOnClickListener(videoControlsListener)
-                            } else if (isAutoPlay && !TextUtils.isEmpty(videoUrl)) {
-                                initializeMediaPlayer(holder.surface)
-                            } else {
-                                adjustToggleState()
-                                showControls()
-                            }
-                        }
-
-                        override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {/* noop */}
-
-                        override fun surfaceDestroyed(holder: SurfaceHolder) {
-                            if (mMediaPlayer != null) {
-                                mSavedCurrentPosition = mMediaPlayer!!.currentPosition
-                            }
-                            destroyMediaPlayer()
-                        }
-                    })
-        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -434,10 +448,7 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
 
     fun play() {
         if (mMediaPlayer == null) {
-            val surface = mSurfaceView.holder.surface
-            if (surface != null && surface.isValid) {
-                initializeMediaPlayer(surface)
-            }
+            initializeMediaPlayer()
         } else if (mCurrentState != STATE_BUFFERING) {
             mMediaPlayer!!.start()
             mCurrentState = STATE_PLAYING
@@ -480,13 +491,13 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
-    private fun initializeMediaPlayer(surface: Surface) {
+    private fun initializeMediaPlayer() {
         if (TextUtils.isEmpty(videoUrl)) {
             return
         }
 
         mMediaPlayer = MediaPlayer()
-        mMediaPlayer!!.setSurface(surface)
+        createSurface()
         mMediaPlayer!!.setOnVideoSizeChangedListener(mSizeChangedListener)
         mMediaPlayer!!.setOnSeekCompleteListener { hideBufferingIcon() }
         if (mMediaPlayerErrorListener != null) {
@@ -561,6 +572,7 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
 
     private fun destroyMediaPlayer() {
         if (mMediaPlayer != null) {
+            mMediaPlayer!!.reset()
             mMediaPlayer!!.release()
             mMediaPlayer = null
             mCurrentState = STATE_IDLE
