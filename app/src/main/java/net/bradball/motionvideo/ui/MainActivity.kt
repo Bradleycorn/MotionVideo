@@ -66,6 +66,23 @@ class MainActivity : AppCompatActivity() {
         setupVideo()
     }
 
+    override fun onPause() {
+        super.onPause()
+        if (currentPlaybackState == MainActivityViewModel.VideoPlaybackState.PLAYING)  {
+            video_player.pause()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (currentPlaybackState == MainActivityViewModel.VideoPlaybackState.PLAYING) {
+            video_player.ensureSurface()
+            video_player.showControls()
+            attachVideoListeners()
+        }
+    }
+
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.options_menu, menu)
@@ -265,7 +282,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun playVideo() {
         video_player.play()
-        video_player.setVideoListener(videoPlayerCallbacks)
+        attachVideoListeners()
     }
 
     private fun stopVideo() {
@@ -273,6 +290,10 @@ class MainActivity : AppCompatActivity() {
             video_player.stop()
             video_player.setVideoListener(null)
         }
+    }
+
+    private fun attachVideoListeners() {
+        video_player.setVideoListener(videoPlayerCallbacks)
     }
 
 }
