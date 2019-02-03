@@ -1,7 +1,11 @@
 package net.bradball.motionvideo.customViews
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
@@ -10,12 +14,10 @@ import android.text.TextUtils
 import android.transition.TransitionManager
 import android.util.AttributeSet
 import android.util.Log
-import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
 import android.view.View.OnClickListener
-import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
@@ -51,6 +53,10 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
     private val mShade: View
     private val mProgressBar: ProgressBar
     private var isFullScreen: Boolean = false
+
+
+    val becomingNoisyReceiverIntentFiler = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+    var becomingNoisyReceiver: BecomingNoisyReceiver? = null
 
     /** This plays the video. This will be null when no video is set.  */
     private var mMediaPlayer: MediaPlayer? = null
@@ -126,7 +132,7 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
         }
 
     val isPlaying: Boolean
-        get() = mMediaPlayer != null && mMediaPlayer!!.isPlaying
+        get() = mMediaPlayer != null && (mCurrentState == STATE_PLAYING || mCurrentState == STATE_PAUSED || mCurrentState == STATE_BUFFERING)
 
     /** Monitors all events related to [ControlledVideoView].  */
     interface IVideoListener {
@@ -150,15 +156,18 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
         fun onVideoFullScreenClicked(isFullScreen: Boolean) {}
     }
 
+    fun ensureSurface() {
+        if (mSurfaceView == null) {
+            if (getChildAt(0) is SurfaceView) {
+                container.removeViewAt(0)
+            }
+            createSurface()
+        } else if (mMediaPlayer != null) {
+            mMediaPlayer!!.setDisplay(mSurfaceView!!.holder)
+        }
+    }
 
     private fun createSurface() {
-
-        val firstChild = container.getChildAt(0)
-
-        if (mSurfaceView != null && firstChild == mSurfaceView) {
-            container.removeView(firstChild)
-            mSurfaceView = null
-        }
 
         mSurfaceView = SurfaceView(context)
         mSurfaceView!!.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
@@ -170,7 +179,7 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
                         override fun surfaceCreated(holder: SurfaceHolder) {
                             mSurfaceView!!.setOnClickListener(videoControlsListener)
                             if (mMediaPlayer != null) {
-                                mMediaPlayer?.setSurface(holder.surface)
+                                mMediaPlayer?.setDisplay(holder)
                             } else {
                                 adjustToggleState()
                                 showControls()
@@ -181,9 +190,12 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
 
                         override fun surfaceDestroyed(holder: SurfaceHolder) {
                             if (mMediaPlayer != null) {
-                                mSavedCurrentPosition = mMediaPlayer!!.currentPosition
+                                if (mCurrentState == STATE_PLAYING) {
+                                    pause()
+                                }
+                                //mSavedCurrentPosition = mMediaPlayer!!.currentPosition
                             }
-                            destroyMediaPlayer()
+                            mSurfaceView = null
                         }
                     })
         }
@@ -238,7 +250,7 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
                 mTimeoutHandler = TimeoutHandler(this@ControlledVideoView)
             }
             mTimeoutHandler!!.removeMessages(TimeoutHandler.MESSAGE_HIDE_CONTROLS)
-            if (mMediaPlayer != null && mCurrentState == STATE_PLAYING) {
+            if (mMediaPlayer != null && mCurrentState == STATE_PLAYING || mCurrentState == STATE_PAUSED) {
                 mTimeoutHandler!!.sendEmptyMessageDelayed(
                         TimeoutHandler.MESSAGE_HIDE_CONTROLS, TIMEOUT_CONTROLS.toLong())
             }
@@ -458,6 +470,7 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
                 mVideoListener!!.onVideoStarted()
             }
         }
+        registerBecomingNoisyReceiver()
     }
 
     fun pause() {
@@ -479,6 +492,7 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
         if (mVideoListener != null) {
             mVideoListener!!.onVideoPaused()
         }
+        unregisterBecomingNoisyReceiver()
     }
 
     fun stop() {
@@ -486,6 +500,7 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
             if (mMediaPlayer!!.isPlaying && mCurrentState != STATE_BUFFERING) {
                 mMediaPlayer!!.stop()
             }
+            mSurfaceView = null
             destroyMediaPlayer()
             adjustToggleState()
         }
@@ -497,7 +512,7 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
         }
 
         mMediaPlayer = MediaPlayer()
-        createSurface()
+        ensureSurface()
         mMediaPlayer!!.setOnVideoSizeChangedListener(mSizeChangedListener)
         mMediaPlayer!!.setOnSeekCompleteListener { hideBufferingIcon() }
         if (mMediaPlayerErrorListener != null) {
@@ -548,7 +563,10 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
                         }
                     }
                     // We have been paused while it was buffering.
-                    STATE_PAUSED -> mediaPlayer.pause()
+                    STATE_PAUSED -> {
+                        mediaPlayer.pause()
+                        mCurrentState = STATE_PAUSED
+                    }
                     // We have been stopped or encountered an error. Shut it down!
                     else -> stop()
                 }
@@ -647,6 +665,30 @@ class ControlledVideoView @JvmOverloads constructor(context: Context, attrs: Att
         companion object {
 
             internal const val MESSAGE_HIDE_CONTROLS = 1
+        }
+    }
+
+    private fun registerBecomingNoisyReceiver() {
+        if (becomingNoisyReceiver == null) {
+            becomingNoisyReceiver = BecomingNoisyReceiver { pause() }
+            context?.registerReceiver(becomingNoisyReceiver, becomingNoisyReceiverIntentFiler)
+        }
+    }
+
+
+    private fun unregisterBecomingNoisyReceiver() {
+        if (becomingNoisyReceiver != null) {
+            context?.unregisterReceiver(becomingNoisyReceiver)
+            becomingNoisyReceiver = null
+        }
+    }
+
+    class BecomingNoisyReceiver(private val onNoisyCallback: () -> Unit) : BroadcastReceiver() {
+
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
+                onNoisyCallback.invoke()
+            }
         }
     }
 
